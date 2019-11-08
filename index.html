@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Mobilités résidentielles</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="CGET / Observatoire des territoires" />
+    <link href="libs/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xar_OT.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Mobilités résidentielles
+## Ecriture, développement et diffusion
+### CGET / Observatoire des territoires
+### SAGEO - 13 Novembre 2019
+
+---
+
+
+
+
+
+# L'Observatoire des territoires  
+  
+&lt;br&gt;
+
+
++ ### Créé par décret en 2004, renouvelé en 2011 puis en 2017 (pour 6 ans)
+
+Placé auprès du ministre chargé de l’aménagement du territoire.
+
+Un conseil d’orientation présidé par une personnalité qualifiée.
+
+Le secrétariat permanent de l’Observatoire est assuré par le CGET 
+
+***
+
++ ### Ses missions
+
+Rassembler, analyser et diffuser des données sur les dynamiques et les disparités territoriales, en articulant les échelles (rapports, fiches analyse, site).
+
+Développer des méthodes innovantes pour l’analyse des territoires
+
+***
+
++ ### Les rapports de l’Observatoire des territoires
+
+Des [analyses](https://www.observatoire-des-territoires.gouv.fr/observatoire-des-territoires/fr/node) approfondies pour guider les acteurs publics dans l’élaboration de diagnostics locaux.
+
+Des indicateurs statistiques et des cartes disponibles [en ligne](https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive/#c=home)
+
+---
+
+
+# Le rapport sur les mobilités résidentielles 
+  
+&lt;br&gt;
+
+
++ ### Les français sont-ils moins mobiles que les européens ? Moins mobiles qu'avant ?
++ ### Qui déménage plus ?
++ ### Vers quels territoires se déplacent-ils préférentiellement ?
++ ### Quel impact sur le profil socio-démographique des territoires ?
++ ### Vers quels territoires se déplacent-ils préférentiellement ? Qui ? A quel âge ?
++ ### Quels liens entre mobilités et emploi ?
+
+--
+
+
+
+.pull-left[
+Tout ce que vous avez toujours voulu savoir sur __les mobilités__ sans jamais oser le demander <i class="fas  fa-arrow-alt-circle-right "></i>  
+
+![](https://media.giphy.com/media/1ff4bUSZ923eM/giphy.gif)
+
+
+]
+.pull-right[
+
+&lt;a href="https://www.observatoire-des-territoires.gouv.fr/observatoire-des-territoires/fr/rapports"&gt; &lt;img src="./img/visuels_rapports/Couverture_rapport_2018.jpg"  height="230px" /&gt;
+]
+
+---
+
+# Analyser / écrire / diffuser
+&lt;img src="./img/schemas/sch_flowchart_seq_1.png" height="545px" /&gt;
+
+
+???
+travail en binome avec Louise Haran, collègue géographe
+
+
+
+---
+# Analyser / écrire / diffuser
+&lt;img src="./img/schemas/sch_flowchart_seq_2.png" height="545px" /&gt;
+
+???
+premier package : pas beau
+
+---
+
+# Un package pour ...
+##  S'obliger à documenter les concepts, les méthodes
+
+
+- solde migratoire apparent `\(\neq\)` solde migratoire net interne.
+- Population entrante / sortante/ stable / autochtone ...
+- Indices de renouvellement socio-démographique
+
+&lt;a href="https://observatoire-territoires.github.io/migR/articles/methodo_migr.html"&gt; &lt;img src="./img/schemas/visu_site_methodo.png"  height="300px" /&gt;
+
+-&gt; [https://observatoire-territoires.github.io/migR/articles/methodo_migr.html](https://observatoire-territoires.github.io/migR/articles/methodo_migr.html)
+
+???
+reprise des travaux de Joel Gombin
+
+---
+
+# Un package pour ...
+##  Charger / formater des tables de détail décrivant des migrations
+
+
+Télécharger le fichier détail des migrations résidentielles du recensement de l’Insee :
+
+```r
+library(migR)
+FD_MIGCOM_2016 &lt;- chargement_fd_migcom(telechargement = TRUE,
+                                       anneeRP = "2016",
+                                       monet = TRUE,
+                                       dossier_dest_TL = "./data")
+```
+
+Ajouter des maillages supracommunaux à la table de détail :
+
+```r
+library(migR)
+FD_MIGCOM_2016  &lt;-  
+  ajout_nivgeo_supracomm(TABLE = FD_MIGCOM_2016 ,
+                         CODE_COMMUNE = "DCRAN",
+                         SUFFIXE = "ANTE",
+                         NIVGEO= c("DEP","REG",'EPCI','TYPEDENS'),
+                         COG_IN = 2018,
+                         COG_NIVGEO = 2019) 
+```
+
+-&gt; [https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html](https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html)
+
+???
+sujet des migrations pas aisé, notamment à cause de la lourdeur des tables
+
+---
+
+# Un package pour ...
+##  Calculer des flux et des indicateurs sur les migrations
+
+
+Calculer des flux de mobilités résidentielles entre territoires :
+
+```r
+library(migR)
+flux_migres_DEP &lt;-
+calcul_flux_migres(TABLE =FD_MIGCOM_2016 ,
+                 VAR_NB = "IPONDI",
+                 MIG_NET_INTERNE=TRUE,
+                 NIVGEO_ANTE ="DEP_ANTE",
+                 NIVGEO_ACTU ="DEP_ACTU")
+```
+
+Calculer des indicateurs synthétiques liés aux mobilités résidentielles :
+
+```r
+library(migR)
+indics_migres_DEP &lt;-
+  calcul_indics_migres(TABLE =flux_migres_DEP,
+                       NIVGEO_ANTE ="DEP_ANTE",
+                       NIVGEO_ACTU ="DEP_ACTU",
+                       VAR_NB = "nb_ind",
+                       NIVGEO ="DEP") 
+```
+
+-&gt; [https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html](https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html#calculer-des-indicateurs-synthetiques-lies-aux-mobilites-residentielles)
+
+???
+
++ indicateurs de renouvellement socio-démographique
+
+
+---
+
+# Un package pour ...
+## Se faciliter la vie
+
+Ajouter un champ contenant le libellé d’un territoire à partir de son code court :
+
+```r
+library(migR)
+indics_migres_DEP &lt;-
+ajout_libelles_nivgeo(TABLE = indics_migres_DEP,
+                      NIVGEO_IN ="DEP",
+                      COG_NIVGEO = 2019)
+```
+
+Ajouter un champ contenant le libellé d’une variable de ventilation (sexe, groupe socioprofessionnel, secteur d’activité…) à partir de son code court :
+
+```r
+library(migR)
+indics_migres_DEP_CS1 &lt;-
+ajout_libelles_varventil_insee(TABLE = indics_migres_DEP_CS1,
+                               VAR ="CS1",
+                               MILLESIME_RP = 2016)
+```
+
+-&gt; [https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html](https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html#faciliter-la-lecture-des-tableaux-de-flux-et-dindicateurs)
+
+
+---
+
+# Un package pour ...
+
++ ### Répliquer un traitement sur une autre maille géographique
++ ### Répliquer un traitement sur une autre période
++ ### Actualiser une analyse avec les données actualisées/corrigées du producteur
++ ### Se souvenir 
+
+
+---
+# Analyser / écrire / diffuser
+&lt;img src="./img/schemas/sch_flowchart_seq_3.png" height="545px" /&gt;
+
+---
+
+# Un poster pour ...
+
++ ### Mettre en valeur les flux
++ ### Offrir une entrée très visuelle dans le sujet
++ ### Rester visible IRL
+
+&lt;!-- ![](img/visuels_rapports/poster_mobres_v1.png){height=400px} --&gt;
+
+&lt;img src="img/visuels_rapports/poster_mobres_v1.png" width="55%" height="60%" style="display: block; margin: auto;" /&gt;
+
+-&gt; [https://cartotheque.cget.gouv.fr](https://cartotheque.cget.gouv.fr/media/record/eyJpIjoiZGVmYXVsdCIsIm0iOm51bGwsImQiOjEsInIiOjMzMjZ9/)                   _© Hassen Chougar - CGET_
+---
+# Analyser / écrire / diffuser
+&lt;img src="./img/schemas/sch_flowchart_seq_4.png" height="545px" /&gt;
+
+---
+
+# Une synthèse interactive pour ...
+
++ ### Offrir une alternative à la lecture du pavé
++ ### Synthétiser les principaux enseignements
++ ### S'adapter à un format web type scrolly-telling
+&lt;!-- ![](gif/visuels_rapports/anim_synthese_interactive.mp4) --&gt;
+
+&lt;!-- &lt;video width="320" height="240"&gt; --&gt;
+&lt;!-- &lt;source src="img/visuels_rapports/anim_synthese_interactive.mp4" type="video/mp4"&gt; --&gt;
+&lt;!-- &lt;/video&gt; --&gt;
+
+&lt;iframe width="800" height="400" src="img/visuels_rapports/anim_synthese_interactive_v2.mp4" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;!-- &lt;iframe width="1200" height="400" src="https://observatoire-territoires.github.io/synthese_mob_resid/" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt; --&gt;
+
+-&gt; [https://observatoire-territoires.github.io/synthese_mob_resid/](https://observatoire-territoires.github.io/synthese_mob_resid/)                    _© Bertrand Miroux - CGET_
+
+
+---
+# Analyser / écrire / diffuser
+&lt;img src="./img/schemas/sch_flowchart_seq_5.png" height="545px" /&gt;
+
+---
+
+# Un site de cartographie statistique pour ...
+
++ ### Afficher des indicateurs à n'importe quelle échelle
++ ### Croiser les informations stats sur des thématiques variées
++ ### Dresser le portrait de son territoire, le comparer avec d'autres
+
+&lt;img src="img/visuels_rapports/ecran_geoclip.png" width="60%" height="60%" style="display: block; margin: auto;" /&gt;
+
+
+-&gt; [https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive](https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive/#bbox=275649,6428761,974101,690658&amp;c=indicator&amp;f=3&amp;i=indics_migres_csp.tm_pr_1000_csp&amp;s=2016&amp;view=map9)                  
+
+
+---
+# Analyser / écrire / diffuser
+&lt;img src="./img/schemas/sch_flowchart_seq_5.png" height="545px" /&gt;
+
+---
+
+# Un site de cartographie statistique pour ...
+
++ ### Afficher des indicateurs à n'importe quelle échelle
++ ### Croiser les informations stats sur des thématiques variées
++ ### Dresser le portrait de son territoire, le comparer avec d'autres
+
+&lt;img src="img/visuels_rapports/ecran_geoclip.png" width="50%" height="50%" style="display: block; margin: auto;" /&gt;
+
+
+-&gt; [https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive](https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive/#bbox=275649,6428761,974101,690658&amp;c=indicator&amp;f=3&amp;i=indics_migres_csp.tm_pr_1000_csp&amp;s=2016&amp;view=map9)                  
+
+
+---
+# Analyser / écrire / diffuser
+&lt;img src="./img/schemas/sch_flowchart_seq_tot.png" height="545px" /&gt;
+
+---
+class:top 
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+# Nous contacter
+
+
+.pull-right[
+
+&lt;a href="mailto:observatoire@cget.gouv.fr"&gt;
+.white[<i class="fas  fa-paper-plane "></i> observatoire@cget.gouv.fr]
+&lt;/a&gt;
+
+&lt;a href="http:/observatoire-territoires.github.io/sageo2019"&gt;
+.white[<i class="fas  fa-link "></i> observatoire-territoires.github.io/sageo2019]
+&lt;/a&gt;
+
+
+&lt;a href="http://github.com/observatoire-territoires"&gt;
+.white[<i class="fab  fa-github "></i> @observatoire-territoires]
+&lt;/a&gt;
+
+
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"slideNumberFormat": "%current%",
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": null,
+"scroll": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
