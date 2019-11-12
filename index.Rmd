@@ -105,6 +105,7 @@ travail en binome avec Louise Haran, collègue géographe
 
 ???
 premier package : pas beau
+open source : tomber sur un bon sammaritain qui améliore / corrige
 
 ---
 
@@ -222,15 +223,17 @@ ajout_libelles_varventil_insee(TABLE = indics_migres_DEP_CS1,
 -> [https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html](https://observatoire-territoires.github.io/migR/articles/tutorial_fonctions_migr.html#faciliter-la-lecture-des-tableaux-de-flux-et-dindicateurs)
 
 
----
+???
 
-# Un package pour ...
+S’appuie sur package COGugaison de Kim Antunez
 
-+ ### Répliquer un traitement sur une autre maille géographique
-+ ### Répliquer un traitement sur une autre période
-+ ### Actualiser une analyse avec les données actualisées/corrigées du producteur
-+ ### Se souvenir 
+•  Répliquer un traitement sur une autre maille géographique
+•  Répliquer un traitement sur une autre période
+•  Actualiser une analyse avec les données actualisées/corrigées du producteur
+•  Gagner un temps fou
 
+tout n'est pas documenté / réplicable, seuls les traitements les plus lourds et répétitifs
+données sensibles sur CASD
 
 ---
 # Analyser / écrire / diffuser
@@ -252,6 +255,14 @@ include_graphics(poster)
 ```
 
 -> [https://cartotheque.cget.gouv.fr](https://cartotheque.cget.gouv.fr/media/record/eyJpIjoiZGVmYXVsdCIsIm0iOm51bGwsImQiOjEsInIiOjMzMjZ9/)                   _© Hassen Chougar - CGET_
+
+
+???
+flux courtes distance 
+synthèse des différentes méthodes de représentation inspirées des travaux de F. Bahoken et
+Anita Graser
+
+
 ---
 # Analyser / écrire / diffuser
 <img src="./img/schemas/sch_flowchart_seq_4.png" height="545px" />
@@ -275,6 +286,12 @@ include_graphics(poster)
 
 -> [https://observatoire-territoires.github.io/synthese_mob_resid/](https://observatoire-territoires.github.io/synthese_mob_resid/)                    _© Bertrand Miroux - CGET_
 
+???
+html/javascript
+lisibilité sur mobile, responsive
+1er test
+à mieux intégrer dans le site , hébergement sur github
+
 
 ---
 # Analyser / écrire / diffuser
@@ -293,6 +310,11 @@ poster <- "img/visuels_rapports/ecran_geoclip.png"
 include_graphics(poster) 
 ```
 
+???
+outil central de l'OT
+problème : mauvais pour cartographier flux, ne permet pas un diagnostic spécifique sur
+les migrations
+
 
 -> [https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive](https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive/#bbox=275649,6428761,974101,690658&c=indicator&f=3&i=indics_migres_csp.tm_pr_1000_csp&s=2016&view=map9)                  
 
@@ -300,6 +322,8 @@ include_graphics(poster)
 ---
 # Analyser / écrire / diffuser
 <img src="./img/schemas/sch_flowchart_seq_tot.png" height="545px" />
+
+interet : process d'actualisation package + appli
 
 ---
 
@@ -315,6 +339,12 @@ include_graphics(poster)
 ```
 
 -> [http://outils.observatoire-des-territoires.gouv.fr/mob_resid/](http://outils.observatoire-des-territoires.gouv.fr/mob_resid/)                  
+
+???
+techho : r shiny pour réutiliser une partie des visuels conçus en statique, gagner du
+temps pour prototyper
+pas aussi souple et responsive que du dev js
+
 
 ---
 class:top 
